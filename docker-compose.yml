@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+
+  # SQL database
+  db:
+    image: "postgres:12.2"
+    volumes:
+      - type: volume
+        source: ktor-starter-data
+        target: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "test"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "ktor-starter"
+
+  web:
+    image: my-application
+    depends_on:
+      - db
+    ports:
+      - "4000:8080"
+    environment:
+      DATABASE_URL: "jdbc:postgresql://db:5432/ktor-starter"
+      DATABASE_USER: "test"
+      DATABASE_PASSWORD: "password"
+
+volumes:
+  ktor-starter-data:

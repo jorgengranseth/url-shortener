@@ -1,24 +1,26 @@
 package com.example
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
 import io.ktor.http.*
-import io.ktor.content.*
-import io.ktor.http.content.*
-import io.ktor.webjars.*
-import java.time.*
-import io.ktor.features.*
-import io.ktor.auth.*
-import com.fasterxml.jackson.databind.*
-import io.ktor.jackson.*
 import kotlin.test.*
 import io.ktor.server.testing.*
+import io.ktor.util.KtorExperimentalAPI
 
+@KtorExperimentalAPI
 class ApplicationTest {
+    companion object {
+        @JvmStatic
+        fun setup() {
+            println(" >>>>>>>>> Set database properties")
+            System.setProperty("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+            System.setProperty("DATABASE_USER", "test")
+            System.setProperty("DATABASE_PASSWORD", "password")
+            println(" <<<<<<<<< Set database properties")
+        }
+    }
+
     @Test
     fun testRoot() {
+        setup()
         withTestApplication({ module(testing = true) }) {
             handleRequest(HttpMethod.Get, "/").apply {
                 assertEquals(HttpStatusCode.OK, response.status())

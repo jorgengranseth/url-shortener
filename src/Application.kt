@@ -5,7 +5,6 @@ import io.ktor.response.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.http.*
-import io.ktor.content.*
 import io.ktor.http.content.*
 import io.ktor.webjars.*
 import java.time.*
@@ -13,9 +12,14 @@ import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
 import io.ktor.jackson.*
+import io.ktor.util.KtorExperimentalAPI
 
-fun main(args: Array<String>): Unit = io.ktor.server.jetty.EngineMain.main(args)
+@KtorExperimentalAPI
+fun main(args: Array<String>): Unit {
+    io.ktor.server.jetty.EngineMain.main(args)
+}
 
+@KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = true) {
@@ -47,6 +51,9 @@ fun Application.module(testing: Boolean = true) {
         }
     }
 
+    DatabaseFactory.init()
+    val userService = UserService()
+
     routing {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
@@ -71,6 +78,18 @@ fun Application.module(testing: Boolean = true) {
         get("/json/jackson") {
             call.respond(mapOf("hello" to "world"))
         }
+
+        get("/users") {
+            val users = userService.getAllUsers()
+            println(users)
+            call.respond(HttpStatusCode.OK, users)
+        }
+
+        post("/users") {
+            val user: UserInst = call.receive()
+            val createdUser : UserInst = userService.createUser(user)
+
+            call.respond(HttpStatusCode.Created, createdUser)
+        }
     }
 }
-
