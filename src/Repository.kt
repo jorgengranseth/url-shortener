@@ -1,7 +1,6 @@
 package com.example
 
 import com.example.DatabaseFactory.dbQuery
-import com.example.User.name
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
 import com.zaxxer.hikari.HikariConfig
@@ -43,12 +42,10 @@ object DatabaseFactory {
         return HikariDataSource(config)
     }
 
-
     suspend fun <T> dbQuery(block: () -> T): T =
         withContext(Dispatchers.IO) {
             transaction { block() }
         }
-
 
 }
 

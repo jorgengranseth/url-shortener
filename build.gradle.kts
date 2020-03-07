@@ -44,6 +44,24 @@ tasks.withType<ShadowJar> {
     mergeServiceFiles()
 }
 
+tasks {
+    "run"(JavaExec::class) {
+        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("DATABASE_USER", "test")
+        environment("DATABASE_PASSWORD", "password")
+    }
+    "runShadow"(JavaExec::class) {
+        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("DATABASE_USER", "test")
+        environment("DATABASE_PASSWORD", "password")
+    }
+    "test"(Test::class) {
+        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("DATABASE_USER", "test")
+        environment("DATABASE_PASSWORD", "password")
+    }
+}
+
 flyway {
     url = System.getenv("DATABASE_URL")
     user = System.getenv("DATABASE_USER")

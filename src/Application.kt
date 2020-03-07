@@ -21,21 +21,10 @@ fun main(args: Array<String>): Unit {
 
 @KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = true) {
+fun Application.module() {
     install(Webjars) {
         path = "/webjars" //defaults to /webjars
         zone = ZoneId.systemDefault() //defaults to ZoneId.systemDefault()
-    }
-
-    // https://ktor.io/servers/features/https-redirect.html#testing
-    if (!testing) {
-        install(HttpsRedirect) {
-            // The port to redirect to. By default 443, the default HTTPS port.
-            sslPort = 443
-            // 301 Moved Permanently, or 302 Found redirect.
-            permanentRedirect = true
-        }
     }
 
     install(Authentication) {
@@ -50,13 +39,12 @@ fun Application.module(testing: Boolean = true) {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
-
     DatabaseFactory.init()
     val userService = UserService()
 
     routing {
         get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+            call.respondText("RUNNING", contentType = ContentType.Text.Plain)
         }
 
         // Static feature. Try to access `/static/ktor_logo.svg`
