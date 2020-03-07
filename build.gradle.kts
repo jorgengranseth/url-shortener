@@ -46,26 +46,26 @@ tasks.withType<ShadowJar> {
 
 tasks {
     "run"(JavaExec::class) {
-        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
-        environment("DATABASE_USER", "test")
-        environment("DATABASE_PASSWORD", "password")
+        environment("JDBC_DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("JDBC_DATABASE_USER", "test")
+        environment("JDBC_DATABASE_PASSWORD", "password")
     }
     "runShadow"(JavaExec::class) {
-        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
-        environment("DATABASE_USER", "test")
-        environment("DATABASE_PASSWORD", "password")
+        environment("JDBC_DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("JDBC_DATABASE_USER", "test")
+        environment("JDBC_DATABASE_PASSWORD", "password")
     }
     "test"(Test::class) {
-        environment("DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
-        environment("DATABASE_USER", "test")
-        environment("DATABASE_PASSWORD", "password")
+        environment("JDBC_DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
+        environment("JDBC_DATABASE_USER", "test")
+        environment("JDBC_DATABASE_PASSWORD", "password")
     }
 }
 
 flyway {
-    url = System.getenv("DATABASE_URL")
-    user = System.getenv("DATABASE_USER")
-    password = System.getenv("DATABASE_PASSWORD")
+    url = System.getenv("JDBC_DATABASE_URL")
+    user = System.getenv("JDBC_DATABASE_USER")
+    password = System.getenv("JDBC_DATABASE_PASSWORD")
     baselineOnMigrate=true
     locations = arrayOf("filesystem:resources/db/migration")
 }
