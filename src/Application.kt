@@ -81,8 +81,20 @@ fun Application.module(testing: Boolean = true) {
 
         get("/users") {
             val users = userService.getAllUsers()
-            println(users)
             call.respond(HttpStatusCode.OK, users)
+        }
+
+        get("/users/{id}") {
+            val id = call.parameters["id"]?.toInt()
+                ?: throw IllegalStateException("Must provide id")
+
+            val user = userService.getUser(id)
+
+            if (user == null) {
+                call.respond(HttpStatusCode.NotFound)
+            } else {
+                call.respond(HttpStatusCode.OK, user)
+            }
         }
 
         post("/users") {

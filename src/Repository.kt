@@ -68,7 +68,13 @@ class UserService {
             key = insert get User.id
         }
 
-        return user.copy(id = key)
+        return getUser(key)!!
+    }
+
+    suspend fun getUser(id: Int): UserInst? = dbQuery {
+        User.select { (User.id eq id) }
+            .mapNotNull { toUser(it) }
+            .singleOrNull()
     }
 
     private fun toUser(row: ResultRow): UserInst =
