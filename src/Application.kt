@@ -11,8 +11,10 @@ import java.time.*
 import io.ktor.features.*
 import io.ktor.auth.*
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import io.ktor.jackson.*
 import io.ktor.util.KtorExperimentalAPI
+import org.slf4j.LoggerFactory
 
 @KtorExperimentalAPI
 fun main(args: Array<String>) {
@@ -88,9 +90,38 @@ fun Application.module(testing: Boolean = false) {
 
         post("/urls") {
             val url: InitUrl = call.receive()
-            val createdUrl : Url = urlService.createShortUrl(url.fullUrl)
+            try {
+                val createdUrl : Url = urlService.createShortUrl(url.fullUrl)
+                call.respond(HttpStatusCode.Created, createdUrl)
+            } catch (err: IllegalStateException) {
+                call.respond(HttpStatusCode.Conflict)
+            }
 
-            call.respond(HttpStatusCode.Created, createdUrl)
+        }
+
+        delete("/urls") {
+            try {
+                val url: InitUrl = call.receive()
+                val deletes = urlService.deleteUrl(url.fullUrl)
+
+                if (deletes == 0) {
+                    call.respond(HttpStatusCode.NotFound)
+                } else {
+                    call.respond(HttpStatusCode.OK)
+                }
+            } catch (err: MissingKotlinParameterException) {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+
+        val redirectLogger = LoggerFactory.getLogger("Redirect")
+        get("/{id}") {
+            val id = call.parameters["id"]
+            id?.let { urlService.getUrl(it) }
+                ?.also { redirectLogger.info("Redirecting $id to ${it.fullUrl}") }
+                ?.let { call.respondRedirect(it.fullUrl, permanent = false) }
+                ?: call.respond(HttpStatusCode.NotFound)
+
         }
     }
 }
