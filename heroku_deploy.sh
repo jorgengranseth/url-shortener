@@ -1,6 +1,6 @@
 #! /bin/bash
 set -e
 
-./rebuild_docker.sh
+./gradlew build --stacktrace
 heroku container:push web
 heroku container:release web
