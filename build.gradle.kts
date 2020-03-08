@@ -55,11 +55,6 @@ tasks {
         environment("JDBC_DATABASE_USER", "test")
         environment("JDBC_DATABASE_PASSWORD", "password")
     }
-    "test"(Test::class) {
-        environment("JDBC_DATABASE_URL", "jdbc:postgresql://localhost:5432/ktor-starter")
-        environment("JDBC_DATABASE_USER", "test")
-        environment("JDBC_DATABASE_PASSWORD", "password")
-    }
 }
 
 flyway {

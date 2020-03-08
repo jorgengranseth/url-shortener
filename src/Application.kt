@@ -20,7 +20,8 @@ fun main(args: Array<String>) {
 }
 
 @KtorExperimentalAPI
-fun Application.module() {
+@kotlin.jvm.JvmOverloads
+fun Application.module(testing: Boolean = false) {
     install(Webjars) {
         path = "/webjars" //defaults to /webjars
         zone = ZoneId.systemDefault() //defaults to ZoneId.systemDefault()
@@ -39,7 +40,7 @@ fun Application.module() {
         }
     }
 
-    DatabaseFactory.init()
+    if (!testing) DatabaseFactory.init()
     val urlService = UrlService()
 
     routing {
