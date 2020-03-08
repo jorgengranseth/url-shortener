@@ -1,6 +1,5 @@
 package com.example
 
-import com.example.DatabaseFactory.dbQuery
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
 import com.zaxxer.hikari.HikariConfig
@@ -48,48 +47,3 @@ object DatabaseFactory {
         }
 
 }
-
-@KtorExperimentalAPI
-class UserService {
-    suspend fun getAllUsers(): List<UserInst> = dbQuery {
-        User.selectAll().map { toUser(it) }
-    }
-
-    suspend fun createUser(user: UserInst): UserInst {
-        var key = 0
-        dbQuery {
-            val insert = User.insert {
-                it[name] = user.name
-            }
-
-            key = insert get User.id
-        }
-
-        return getUser(key)!!
-    }
-
-    suspend fun getUser(id: Int): UserInst? = dbQuery {
-        User.select { (User.id eq id) }
-            .mapNotNull { toUser(it) }
-            .singleOrNull()
-    }
-
-    private fun toUser(row: ResultRow): UserInst =
-        UserInst(
-            id = row[User.id],
-            name = row[User.name]
-        )
-
-}
-
-private object User: Table() {
-    val id: Column<Int> = integer("id").autoIncrement()
-    val name: Column<String> = varchar("name", 20)
-    override val primaryKey = PrimaryKey(id, name = "PD_User_ID")
-}
-
-data class UserInst(
-    val id: Int?,
-    val name: String
-)
-

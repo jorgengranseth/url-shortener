@@ -15,12 +15,11 @@ import io.ktor.jackson.*
 import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
-fun main(args: Array<String>): Unit {
+fun main(args: Array<String>) {
     io.ktor.server.jetty.EngineMain.main(args)
 }
 
 @KtorExperimentalAPI
-@Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     install(Webjars) {
         path = "/webjars" //defaults to /webjars
@@ -39,8 +38,9 @@ fun Application.module() {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
+
     DatabaseFactory.init()
-    val userService = UserService()
+    val urlService = UrlService()
 
     routing {
         get("/") {
@@ -67,29 +67,31 @@ fun Application.module() {
             call.respond(mapOf("hello" to "world"))
         }
 
-        get("/users") {
-            val users = userService.getAllUsers()
-            call.respond(HttpStatusCode.OK, users)
+        get("/urls") {
+            val urls = urlService.getAllUrls()
+            call.respond(HttpStatusCode.OK, urls)
         }
 
-        get("/users/{id}") {
-            val id = call.parameters["id"]?.toInt()
+        get("/urls/{id}") {
+            val id = call.parameters["id"]
                 ?: throw IllegalStateException("Must provide id")
 
-            val user = userService.getUser(id)
+            val url = urlService.getUrl(id)
 
-            if (user == null) {
+            if (url == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
-                call.respond(HttpStatusCode.OK, user)
+                call.respond(HttpStatusCode.OK, url)
             }
         }
 
-        post("/users") {
-            val user: UserInst = call.receive()
-            val createdUser : UserInst = userService.createUser(user)
+        post("/urls") {
+            val url: InitUrl = call.receive()
+            val createdUrl : Url = urlService.createShortUrl(url.fullUrl)
 
-            call.respond(HttpStatusCode.Created, createdUser)
+            call.respond(HttpStatusCode.Created, createdUrl)
         }
     }
 }
+
+data class InitUrl(val fullUrl: String)
