@@ -46,8 +46,12 @@ fun Application.module(testing: Boolean = false) {
     val urlService = UrlService()
 
     routing {
-        get("/") {
+        get("/alive") {
             call.respondText("RUNNING", contentType = ContentType.Text.Plain)
+        }
+
+        static {
+            resource("/", "static/index.html")
         }
 
         // Static feature. Try to access `/static/ktor_logo.svg`
