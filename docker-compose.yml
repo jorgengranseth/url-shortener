@@ -34,5 +34,13 @@ services:
     ports:
       - "8079:8080"
 
+  elm:
+    image: codesimple/elm:0.19
+    working_dir: /code
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./frontend:/code
+
 volumes:
   ktor-starter-data:

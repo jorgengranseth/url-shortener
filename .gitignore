@@ -6,3 +6,7 @@
 *.ipr
 *.iws
 ktor-starter-data
+
+elm-stuff/
+resources/static/index.html
+node_modules/

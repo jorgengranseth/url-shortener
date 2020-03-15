@@ -61,6 +61,17 @@ class UrlService {
             .singleOrNull()
     }
 
+    suspend fun clickUrl(id: String): Url? = DatabaseFactory.dbQuery {
+        UrlTable.select { (UrlTable.short_url eq id) }
+            .singleOrNull()
+            ?.let { toUrl(it) }
+            ?.let { it.copy(clicks = it.clicks + 1) }
+
+        UrlTable.update(where = (UrlTable.short_url eq id)) {
+            UrlTable.
+        }
+    }
+
     suspend fun deleteUrl(id: String): Int = DatabaseFactory.dbQuery {
         UrlTable.deleteWhere { (UrlTable.full_url eq id) }
     }
